@@ -2,7 +2,7 @@
  * BootstrapValidator (http://bootstrapvalidator.com)
  * The best jQuery plugin to validate form fields. Designed to use with Bootstrap 3
  *
- * @version     v0.5.3-dev, built on 2014-11-04 8:21:42 AM
+ * @version     v0.5.3-dev, built on 2014-11-04 4:28:28 PM
  * @author      https://twitter.com/nghuuphuoc
  * @copyright   (c) 2013 - 2014 Nguyen Huu Phuoc
  * @license     MIT
@@ -303,7 +303,7 @@ if (typeof jQuery === 'undefined') {
                 }
 
                 // Remove all error messages and feedback icons
-                $message.find('.help-block[data-bv-validator][data-bv-for="' + field + '"]').remove();
+                $parent.find('.help-block[data-bv-validator][data-bv-for="' + field + '"]').remove();
                 $parent.find('i[data-bv-icon-for="' + field + '"]').remove();
 
                 // Whenever the user change the field value, mark it as not validated yet
@@ -317,7 +317,7 @@ if (typeof jQuery === 'undefined') {
                     $field.data('bv.result.' + validatorName, this.STATUS_NOT_VALIDATED);
 
                     if (!updateAll || i === total - 1) {
-                        $('<small/>')
+                        var $small = $('<small/>')
                             .css('display', 'none')
                             .addClass('help-block')
                             .attr('data-bv-validator', validatorName)
@@ -325,6 +325,12 @@ if (typeof jQuery === 'undefined') {
                             .attr('data-bv-result', this.STATUS_NOT_VALIDATED)
                             .html(this._getMessage(field, validatorName))
                             .appendTo($message);
+                            
+                        // Fix help-block in input-group
+                        if ($parent.find('.input-group').length !== 0) {
+                            $small.addClass('bv-help-block-input-group')
+                                .insertAfter($parent.find('.input-group').eq(0));
+                        }
                     }
 
                     // Init the validator
@@ -515,7 +521,7 @@ if (typeof jQuery === 'undefined') {
             }
 
             var cssClasses = $parent.attr('class');
-            if (!cssClasses) {
+            if (!cssClasses || $parent.is('.input-group')) {
                 return this._getMessageContainer($parent, group);
             }
 
