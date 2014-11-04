@@ -1578,6 +1578,24 @@ if (typeof jQuery === 'undefined') {
         },
 
         /**
+         * Enable/Disable all fields validators
+         *
+         * @param {Boolean} enabled Enable/Disable all field validators
+         * @returns {BootstrapValidator}
+         */
+        enableAllFieldsValidators: function(enabled) {
+            
+            // Cycle all fields
+            for (var field in this.options.fields) {
+                if (this.options.fields.hasOwnProperty(field)) {
+                    this.enableFieldValidators(field, enabled);
+                }
+            }
+            
+            return this;
+        },
+        
+        /**
          * Some validators have option which its value is dynamic.
          * For example, the zipCode validator has the country option which might be changed dynamically by a select element.
          *

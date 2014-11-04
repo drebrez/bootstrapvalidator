@@ -533,6 +533,9 @@ describe('enable validators', function() {
                 '<div class="form-group">',
                     '<input type="text" name="fullName" class="form-control" />',
                 '</div>',
+                '<div class="form-group">',
+                    '<input type="text" name="email" class="form-control" />',
+                '</div>',
             '</form>'
         ].join('\n')).appendTo('body');
 
@@ -554,12 +557,24 @@ describe('enable validators', function() {
                             message: 'The full name can only consist of alphabetical, number, and space'
                         }
                     }
+                },
+                email: {
+                    validators: {
+                        notEmpty: {
+                            enabled: false,
+                            message: 'The email is required and cannot be empty'
+                        },
+                        emailAddress: {
+                            message: 'The value is not a valid email address'
+                        }
+                    }
                 }
             }
         });
 
         this.bv        = $('#enableForm').data('bootstrapValidator');
         this.$fullName = this.bv.getFieldElements('fullName');
+        this.$email    = this.bv.getFieldElements('email');
     });
 
     afterEach(function() {
@@ -627,6 +642,44 @@ describe('enable validators', function() {
 
         var messages = this.bv.getMessages('fullName');
         expect($.inArray('The full name can only consist of alphabetical, number, and space', messages)).toEqual(-1);
+    });
+    
+    it('enable all fields validators', function() {
+    
+        this.$fullName.val('@ $full N@m3');
+        this.$email.val('');
+        
+        this.bv.validate();
+        expect(this.bv.isValid()).toBeTruthy();
+
+        this.bv.resetForm();
+        this.$email.val('test@@example.com');
+        this.bv.enableAllFieldsValidators(true);
+        
+        this.bv.validate();
+        expect(this.bv.isValidField('email')).toEqual(false);
+        expect(this.bv.isValid()).toEqual(false);
+        
+    });
+    
+    it('disable all fields validators', function() {
+    
+        this.$fullName.val('@ $full N@m3');
+        this.$email.val('test@example.com');
+        
+        this.bv.validate();
+        expect(this.bv.isValid()).toBeTruthy();
+
+        this.bv.resetForm();
+        this.$fullName.val('');
+        this.$email.val('*%ç&%');
+        this.bv.enableAllFieldsValidators(false);
+        
+        this.bv.validate();
+        expect(this.bv.isValidField('fullName')).toBeTruthy();
+        expect(this.bv.isValidField('email')).toBeTruthy();
+        expect(this.bv.isValid()).toBeTruthy();
+        
     });
 });
 
